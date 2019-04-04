@@ -101,10 +101,17 @@ def go(ain1, ain2, pwm_a, bin1, bin2, pwm_b):
         GPIO.output(bin2, GPIO.HIGH)
 
     s = int(request.args.get('speed', 30)) % 100
+    s = 100 if request.args.get('speed', 0) == "100" else s # haha
     pwm_a.start(s)
     pwm_b.start(s)
 
     d = int(request.args.get('duration', 3)) % 10 # idk, arbitrary limit
+    d = 10 if request.args.get('duration', 0) == "10" else d # haha
     time.sleep(d)
 
-    return 'Went, with args: ' + str([l,r,s,d])
+    dir_dict = {0: 'никуда', 1: 'вперёд', 2: 'назад'}
+
+    info = "Левое " + dir_dict[l%3] + ", правое " + dir_dict[r%3]\
+        + ", скорость " + str(s) + ", продолжительность " + str(d)
+
+    return info
