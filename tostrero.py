@@ -50,7 +50,7 @@ def setup_wheels(func):
 
 @app.route('/')
 def hello_world():
-    return 'I am Koleca. Please hit /go or something'
+    return 'I am Tostrero. Please hit /go or something'
 
 
 @app.route('/cleanup')

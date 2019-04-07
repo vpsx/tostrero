@@ -1,11 +1,10 @@
-# kolesa
-rename once there is a name
+# tostrero
 
 There's a venv and everything, idk
 
 I am pleased
 
-`$ export FLASK_APP=kolesa.py`
+`$ export FLASK_APP=tostrero.py`
 `$ flask run --host=0.0.0.0`
 It will live at `:5000`.
 
