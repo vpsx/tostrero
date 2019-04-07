@@ -85,7 +85,7 @@ def go(ain1, ain2, pwm_a, bin1, bin2, pwm_b):
         GPIO.output(bin2, GPIO.LOW)
     if l % 3 == 1:
         # Left wheel forward
-        GPIO.output(ain1, GPIO.HIGH) # TODO just flip as necessary if turns out wrong haha
+        GPIO.output(ain1, GPIO.HIGH)
         GPIO.output(ain2, GPIO.LOW)
     if r % 3 == 1:
         # Right wheel forward
