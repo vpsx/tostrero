@@ -39,11 +39,12 @@ p.ChangeFrequency(50) # Useless code for the record
 # It's a common problem. Servo buzz/noise/jitter/etc.
 
 # These names don't make sense pepega
-pausetime = 3
+pausetime = 4
+deadtime = 2
 sleeptime = 0.1
 dutystep = 0.5
-dutymin = 3.0     #5.0; min is 2.5 before it's scary
-dutymax = 12.0    #10.0; max is 12.0 before it's scary
+dutymin = 5.0     #5.0; min is 2.5 before it's scary
+dutymax = 10.0    #10.0; max is 12.0 before it's scary
 dutymid = 7.5     #That should stay # (dutymin + dutymax)/2
 
 dc = dutymin
@@ -77,7 +78,37 @@ try:
 except KeyboardInterrupt:
     print("KeyboardInterrupt. Stopping experiment two")
 
+print("Neutral")
+try:
+    p.ChangeDutyCycle(7.5)
+    time.sleep(pausetime)
+    p.stop()
+    time.sleep(50)
+except KeyboardInterrupt:
+    print("Stopping neutral")
+
+
 
 # Cleanup
 p.stop()
 gpio.cleanup()
+
+
+print("Experiment Four")
+try:
+    while 1:
+        for pos in [dutymin, dutymid, dutymax, dutymid]:
+            gpio.setmode(gpio.BCM)
+            gpio.setup(mypin, gpio.OUT, initial=gpio.LOW)
+            q = gpio.PWM(mypin, 50)
+
+            print(pos)
+            q.start(pos)
+            time.sleep(pausetime)
+            print("Stopping")
+            q.stop()
+            gpio.cleanup()
+            time.sleep(deadtime)
+except KeyboardInterrupt:
+    gpio.cleanup()
+    print("Stopping experiment four")
