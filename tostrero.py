@@ -9,7 +9,9 @@ app = Flask(__name__)
 
 def setup_wheels(func):
     # @functools.wraps(func) but ngehh import
-    def wrapper(*args, **kwargs):
+    # Huh. Even if it's local, can't have def wrapper(blah) both
+    # here and in setup_eyes
+    def wrapper_wheels(*args, **kwargs):
         GPIO.setmode(GPIO.BCM)
 
         pin_ain1 = 13
@@ -45,7 +47,24 @@ def setup_wheels(func):
         GPIO.cleanup()
 
         return value
-    return wrapper
+    return wrapper_wheels
+
+
+def setup_eyes(func):
+    # @functools.wraps(func) but ngehh import
+    def wrapper_eyes(*args, **kwargs):
+        # Something something
+        GPIO.setmode(GPIO.BCM)
+        signalpin = 12
+        GPIO.setup(signalpin, GPIO.OUT, initial=GPIO.LOW)
+        pwm_s = GPIO.PWM(signalpin, 50) # channel, hertz
+
+        value = func(pwm_s, *args, **kwargs)
+
+        GPIO.cleanup()
+
+        return value
+    return wrapper_eyes
 
 
 @app.route('/')
@@ -56,8 +75,11 @@ def hello_world():
 @app.route('/cleanup')
 def cleanup():
     # For graceful exit in debugging ha
-    GPIO.cleanup()
-    return 'Cleaned up'
+    try:
+        GPIO.cleanup()
+        return 'Cleaned up gpio'
+    except:
+        return 'Something went wrong with gpio cleanup'
 
 
 @app.route('/go')
@@ -115,3 +137,33 @@ def go(ain1, ain2, pwm_a, bin1, bin2, pwm_b):
         + ", скорость " + str(s) + ", продолжительность " + str(d)
 
     return info
+
+
+@app.route('/look')
+@setup_eyes
+def look(pwm_s):
+    """
+    Will take a float 0 to 10 and interpolate to the nice range.
+    Not 0-9, but 0-10, because people find that more natural I guess.
+
+    The safe range for duty cycle seems to be around 2.5 to around 12.0.
+    The nice range for duty cycle should be like 6.5 to 9.0.
+    The neutral position is dc 7.5.
+    (But servo neutral doesn't translate to camera neutral so who cares...)
+    """
+    # These will probably change so I'll stick em all up here
+    api_min = 0
+    api_max = 10
+    dc_min = 6.5
+    dc_max = 9.0
+
+    h = float(request.args.get('height'))
+    h = max(h, api_min)
+    h = min(h, api_max)
+    dc = dc_min + (h/api_max)*(dc_max-dc_min)
+
+    pwm_s.start(dc)
+    time.sleep(1)
+    pwm_s.stop()
+
+    return "Высота " + str(h) + ", коэффициент заполнения " + str(dc) + ". "
