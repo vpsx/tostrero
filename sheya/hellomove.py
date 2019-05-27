@@ -17,8 +17,9 @@ gpio.setmode(gpio.BCM) # Broadcom, I guess. Alternative is BOARD
 # Channel is the number based on BCM.
 gpio.setup(mypin, gpio.OUT, initial=gpio.LOW)
 
+#p = gpio.PWM(mypin, 100) # That's channel, frequency in Hz
 p = gpio.PWM(mypin, 50) # That's channel, frequency in Hz
-p.ChangeFrequency(50) # Useless code for the record
+#p.ChangeFrequency(50) # Useless code for the record
 
 # Ah oh for servo motors you need milliseconds not duty cycle.
 # The SG92R is 50Hz... and 1.0ms/1.5ms/2.0ms.
@@ -31,20 +32,19 @@ p.ChangeFrequency(50) # Useless code for the record
 # That's pretty fascinating. I guess it makes sense?
 # What if I lengthen the pulses, so lower the freq?
 # ...Okay that screwed everything up ha.
-# TODO:
-# Need to not hardcode the duty cycles and fiddle with freq.
+# Doubling the frequency also didn't work.
 
-# TODO: Explore further. Clean up.
-# TODO: Go investigate this jitter thing... is it normal
-# It's a common problem. Servo buzz/noise/jitter/etc.
+# Turns out it's a common problem. Servo buzz/noise/jitter/etc.
+# Multimeter indicates power doesn't drop, frequency is correct,
+# and duty cycles are as expected...-_-
 
 # These names don't make sense pepega
 pausetime = 4
 deadtime = 2
 sleeptime = 0.1
 dutystep = 0.5
-dutymin = 5.0     #5.0; min is 2.5 before it's scary
-dutymax = 10.0    #10.0; max is 12.0 before it's scary
+dutymin = 6.5     #5.0; min is 2.5 before it's scary
+dutymax = 9.0    #10.0; max is 12.0 before it's scary
 dutymid = 7.5     #That should stay # (dutymin + dutymax)/2
 
 dc = dutymin
