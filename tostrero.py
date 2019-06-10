@@ -92,8 +92,8 @@ def go(ain1, ain2, pwm_a, bin1, bin2, pwm_b):
     and we'll mod 3 so that -1 is also backwards plus no errors
     Expecting following URL parameters: l, r, lspeed, rspeed, duration
     """
-    l = int(request.args.get('l', 1))
-    r = int(request.args.get('r', 1))
+    l = int(float(request.args.get('l', 1)))
+    r = int(float(request.args.get('r', 1)))
 
     # IDK, I suppose I should use elifs for early termination,
     # but I kinda like this...
@@ -122,14 +122,14 @@ def go(ain1, ain2, pwm_a, bin1, bin2, pwm_b):
         GPIO.output(bin1, GPIO.LOW)
         GPIO.output(bin2, GPIO.HIGH)
 
-    ls = int(request.args.get('lspeed', 30)) % 100
+    ls = float(request.args.get('lspeed', 30)) % 100
     ls = 100 if request.args.get('lspeed', 0) == "100" else ls # haha
-    rs = int(request.args.get('rspeed', 30)) % 100
+    rs = float(request.args.get('rspeed', 30)) % 100
     rs = 100 if request.args.get('rspeed', 0) == "100" else rs # haha
     pwm_a.start(ls)
     pwm_b.start(rs)
 
-    d = int(request.args.get('duration', 3)) % 10 # idk, arbitrary limit
+    d = float(request.args.get('duration', 3)) % 10 # idk, arbitrary limit
     d = 10 if request.args.get('duration', 0) == "10" else d # haha
     time.sleep(d)
 
