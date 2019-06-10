@@ -90,7 +90,7 @@ def go(ain1, ain2, pwm_a, bin1, bin2, pwm_b):
     A=left wheel B=right wheel
     0 = stationary 1 = forward 2 = backwards
     and we'll mod 3 so that -1 is also backwards plus no errors
-    Expecting following URL parameters: l, r, speed, duration
+    Expecting following URL parameters: l, r, lspeed, rspeed, duration
     """
     l = int(request.args.get('l', 1))
     r = int(request.args.get('r', 1))
@@ -122,10 +122,12 @@ def go(ain1, ain2, pwm_a, bin1, bin2, pwm_b):
         GPIO.output(bin1, GPIO.LOW)
         GPIO.output(bin2, GPIO.HIGH)
 
-    s = int(request.args.get('speed', 30)) % 100
-    s = 100 if request.args.get('speed', 0) == "100" else s # haha
-    pwm_a.start(s)
-    pwm_b.start(s)
+    ls = int(request.args.get('lspeed', 30)) % 100
+    ls = 100 if request.args.get('lspeed', 0) == "100" else ls # haha
+    rs = int(request.args.get('rspeed', 30)) % 100
+    rs = 100 if request.args.get('rspeed', 0) == "100" else rs # haha
+    pwm_a.start(ls)
+    pwm_b.start(rs)
 
     d = int(request.args.get('duration', 3)) % 10 # idk, arbitrary limit
     d = 10 if request.args.get('duration', 0) == "10" else d # haha
@@ -133,8 +135,9 @@ def go(ain1, ain2, pwm_a, bin1, bin2, pwm_b):
 
     dir_dict = {0: 'никуда', 1: 'вперёд', 2: 'назад'}
 
-    info = "Левое " + dir_dict[l%3] + ", правое " + dir_dict[r%3]\
-        + ", скорость " + str(s) + ", продолжительность " + str(d)
+    info = "Левое " + dir_dict[l%3] + ", скорость " + str(ls) + ". "\
+        + "Правое " + dir_dict[r%3] + ", скорость " + str(rs) + ". "\
+        + "Продолжительность " + str(d) + ". "
 
     return info
 
